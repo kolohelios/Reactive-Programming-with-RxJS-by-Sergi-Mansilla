@@ -1,0 +1,20 @@
+<html>
+<head>
+<script src="../node_modules/rx/dist/rx.all.js"></script>
+</head>
+
+<body>
+
+<script>
+Rx.Observable.fromEvent(document, 'click')
+    .filter(function(c) {
+        return c.clientX > window.innerWidth / 2;
+    })
+    .take(10)
+    .subscribe(function(c) {
+        console.log(c.clientX, c.clientY);
+    });
+</script>
+
+</body>
+</html>
