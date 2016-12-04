@@ -1,0 +1,66 @@
+<html>
+<head>
+<script src="../node_modules/rx/dist/rx.all.js"></script>
+</head>
+
+<body>
+
+<script>
+var observable = Rx.Observable.create(function(observer) {
+    observer.onNext('Alvin');
+    observer.onNext('Simon');
+    observer.onNext('Theodore');
+    observer.onCompleted();
+});
+
+var observer = Rx.Observer.create(
+    function onNext(x) {
+        console.log('Next: ' + x);
+    },
+    function onError(err) {
+        console.error('Error: ' + err);
+    },
+    function onCompleted() {
+        console.log('Completed');
+    }
+);
+
+function get(url) {
+    return Rx.Observable.create(function(observer) {
+        var req = new XMLHttpRequest();
+        req.open('GET', url);
+
+        req.onload = function() {
+            if (req.status === 200) {
+                observer.onNext(req.response);
+                observer.onCompleted();
+            } else {
+                observer.onError(new Error(req.statusText));
+            }
+        };
+
+        req.onerror = function() {
+            observer.onError(new Error('Unknown Error'));
+        };
+
+        req.send();
+    });
+}
+
+var test = get('http://wwis-svc-catalogue.azurewebsites.net/data');
+
+test.subscribe(
+    function onNext(x) {
+        console.log('Result: ' + x);
+    },
+    function onError(err) {
+        console.log('Error' + err);
+    },
+    function onCompleted() {
+        console.log('Completed');
+    }
+);
+</script>
+
+</body>
+</html>
